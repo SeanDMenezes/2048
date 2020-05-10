@@ -20,8 +20,8 @@ def enable_constants():
     RED = (255, 0, 0)
 
 # GAME CONSTANTS
-width = 100
-height = 100
+WIDTH = 100
+HEIGHT = 100
 SIZE = 4
 BLANK ='''
 +----+----+----+----+
@@ -141,7 +141,11 @@ class AI(Graphical):
         elif "left" in valid_moves:
             return "left"
         else:
-            return "up"        
+            return "up"
+
+    def draw(self, g):
+        pygame.time.delay(200)
+        g.draw()       
 
 class Cell:
     def __init__(self, val):
@@ -195,7 +199,7 @@ class Grid:
         SCREEN.fill(WHITE)
         for i in range(4):
             for j in range(4):
-                pygame.draw.rect(SCREEN, BLACK, [100*i + 50, 100*j + 50, width, height], 1)
+                pygame.draw.rect(SCREEN, BLACK, [100*i + 50, 100*j + 50, WIDTH, HEIGHT], 1)
                 text = CALIBRI.render(repr(self.cells[j][i]), True, BLACK)
                 textRect = text.get_rect()
                 textRect.center = 100*i + 100, 100*j + 100
@@ -289,7 +293,7 @@ class Grid:
         self.unmerge()
 
 
-def play(g=Grid()):
+def play(p=Text(), g=Grid()):
     '''
     - initialize grid to be empty
     - begin loop here
@@ -303,7 +307,6 @@ def play(g=Grid()):
     - loop back to start
     '''
 
-    p = Graphical() # oneof Text, AI, Graphical
     running = 1
     while running == 1:
         if not g.filled():
@@ -313,7 +316,6 @@ def play(g=Grid()):
                 continue
             g.cells[pos // SIZE][pos % SIZE] = Cell(new)
         p.draw(g)
-        # print(g)
 
         all_moves = ["up", "down", "left", "right"]
         valid_moves = []
@@ -321,7 +323,6 @@ def play(g=Grid()):
             og_cells = copy.deepcopy(g.cells)
             og_score = g.score
             g.move(m)
-            #g.unmerge()
             if g.cells != og_cells:
                 valid_moves.append(m)
             g.cells = og_cells
@@ -337,9 +338,14 @@ def play(g=Grid()):
             running = 0
         else:
             g.move(direction)
-            #g.unmerge()
         
     pygame.quit()
 
-# g = Grid(generate_grid([2,4,2,4,4,2,4,2]*2)) - setting up a losing board
-play()
+# PLAY IN THE COMMAND LINE
+#play()
+
+# PLAY IN PYGAME
+play(Graphical())
+
+# LET THE AI PLAY
+#play(AI())
